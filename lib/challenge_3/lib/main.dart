@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_challenge/challenge_3/joke.dart';
+import 'package:flutter_challenge/challenge_3/lib/joke.dart';
 
 final client = Dio();
 // API Documentation: https://github.com/15Dkatz/official_joke_api
