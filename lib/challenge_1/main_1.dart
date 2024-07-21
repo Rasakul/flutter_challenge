@@ -43,7 +43,54 @@ class Challenge1Page extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(title),
       ),
-      body: Container(),
+      body: buildTable(),
+    );
+  }
+
+  Widget buildTable() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          buildRow(),
+          buildRow(),
+          buildRow(),
+          buildRow(),
+          buildRow(),
+        ],
+      ),
+    );
+  }
+
+  Widget buildRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        buildBlackCell(),
+        buildWhiteCell(),
+        buildBlackCell(),
+        buildWhiteCell(),
+        buildBlackCell(),
+      ],
+    );
+  }
+
+  Widget buildWhiteCell() {
+    return buildCell(Colors.white, Colors.black);
+  }
+
+  Widget buildBlackCell() {
+    return buildCell(Colors.black, Colors.white);
+  }
+
+  Widget buildCell(Color color, Color border) {
+    return Container(
+      height: 50,
+      width: 50,
+      decoration:
+          BoxDecoration(border: Border.all(color: border), color: color),
     );
   }
 }

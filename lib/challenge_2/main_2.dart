@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,28 +56,76 @@ class Challenge2Page extends StatefulWidget {
 
 class _Challenge2PageState extends State<Challenge2Page> {
   final contacts = [
-    Contact("Kermit", "https://avatar.iran.liara.run/public"),
-    Contact("Piggy", "https://avatar.iran.liara.run/public"),
-    Contact("Fozzie", "https://avatar.iran.liara.run/public"),
-    Contact("Gonzo", "https://avatar.iran.liara.run/public"),
-    Contact("Rowlf", "https://avatar.iran.liara.run/public"),
+    Contact("Kermit", "the Frog", "+43660123456", "test@test.com",
+        "https://avatar.iran.liara.run/public"),
+    Contact("Miss", "Piggy", "+43660123456", "test@test.com",
+        "https://avatar.iran.liara.run/public"),
+    Contact("Fozzie", "Bear", "+43660123456", "test@test.com",
+        "https://avatar.iran.liara.run/public"),
+    Contact("Gonzo", "the Great", "+43660123456", "test@test.com",
+        "https://avatar.iran.liara.run/public"),
+    Contact("Rowlf", "the Dog", "+43660123456", "test@test.com",
+        "https://avatar.iran.liara.run/public"),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+              itemCount: contacts.length, itemBuilder: buildListItem),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: addContact,
+          child: const Icon(Icons.add),
+        ));
+  }
+
+  void addContact() {
+    setState(() {
+      contacts.add(Contact("Test", "Test", "+43660123456", "test@test.com",
+          "https://avatar.iran.liara.run/public"));
+    });
+  }
+
+  Widget buildListItem(BuildContext context, int index) {
+    final contact = contacts[index];
+    return ListTile(
+      title: Text("${contact.firstName} ${contact.lastName}"),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(contact.profileUrl),
       ),
-      body: Container(),
+      trailing: SizedBox(
+        width: 90,
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.phone),
+              onPressed: () => launchUrlString("tel://${contact.phone}"),
+            ),
+            IconButton(
+              icon: const Icon(Icons.email),
+              onPressed: () => launchUrlString("mailto://${contact.email}"),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
 
 class Contact {
-  final String name;
+  final String firstName;
+  final String lastName;
+  final String phone;
+  final String email;
   final String profileUrl;
 
-  Contact(this.name, this.profileUrl);
+  Contact(
+      this.firstName, this.lastName, this.phone, this.email, this.profileUrl);
 }

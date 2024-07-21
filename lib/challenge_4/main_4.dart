@@ -1,6 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_challenge/challenge_4/joke.dart';
+import 'package:flutter_challenge/challenge_4/joke_cubit.dart';
+import 'package:flutter_challenge/challenge_4/view/data_view.dart';
+import 'package:flutter_challenge/challenge_4/view/error_view.dart';
+import 'package:flutter_challenge/challenge_4/view/loading_view.dart';
 
 final client = Dio();
 // API Documentation: https://github.com/15Dkatz/official_joke_api
@@ -47,6 +52,14 @@ class Challenge4Page extends StatefulWidget {
 }
 
 class _Challenge4PageState extends State<Challenge4Page> {
+  final JokeCubit cubit = JokeCubit();
+
+  @override
+  void initState() {
+    super.initState();
+    cubit.loadJoke();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +67,26 @@ class _Challenge4PageState extends State<Challenge4Page> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Container(),
+      body: BlocBuilder<JokeCubit, JokeState>(
+        bloc: cubit,
+        builder: (context, state) {
+          print(state.toString());
+          switch (state) {
+            case JokeLoading():
+              return const LoadingView();
+            case JokeError():
+              return ErrorView(error: state.error);
+            case JokeLoaded():
+              return DataView(
+                  cubit: cubit,
+                  joke: state.joke,
+                  showPunchline: state.showPunchline);
+            case JokeInitial():
+            default:
+              return Container();
+          }
+        },
+      ),
     );
   }
 

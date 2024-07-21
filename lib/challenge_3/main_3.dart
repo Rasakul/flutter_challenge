@@ -50,6 +50,10 @@ class Challenge3Page extends StatefulWidget {
 }
 
 class _Challenge3PageState extends State<Challenge3Page> {
+  bool showPunchline = false;
+  bool refresh = true;
+  Joke? joke;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,12 +61,66 @@ class _Challenge3PageState extends State<Challenge3Page> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Container(),
+      body: FutureBuilder(
+          future: loadRandomJoke(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              final joke = snapshot.data!;
+              return RefreshIndicator(
+                onRefresh: _refresh,
+                child: Center(
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(joke.setup),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          if (!showPunchline)
+                            ElevatedButton(
+                                onPressed: () => {
+                                      setState(() {
+                                        showPunchline = true;
+                                      })
+                                    },
+                                child: const Text("Reveal")),
+                          if (showPunchline) Text(joke.punchline),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          ElevatedButton(
+                              onPressed: _refresh, child: const Text("Reload")),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+            return const Center(child: CircularProgressIndicator());
+          }),
     );
   }
 
+  Future<void> _refresh() async {
+    return setState(() {
+      refresh = true;
+    });
+  }
+
   Future<Joke> loadRandomJoke() async {
-    Response response = await client.get(baseUrl);
-    return Joke.fromJson(response.data);
+    if (refresh) {
+      Response response = await client.get(baseUrl);
+      final joke = Joke.fromJson(response.data);
+      this.joke = joke;
+      refresh = false;
+      showPunchline = false;
+    }
+    return joke!;
   }
 }
