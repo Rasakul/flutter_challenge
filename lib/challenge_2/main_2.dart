@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
 
 // Challenge 2: dynamic contact list
 // Use the array of contacts to display within a list and a FloatingActionButton
-// to add new entries to the list.
+// to add new entries to the list. Usa setState to reload the list and show the
+// new contact
 //
 // Useful widgets: ListView.builder, ListTile, Column, Row, Center, Padding,
 // Container, Center, FloatingActionButton, Image

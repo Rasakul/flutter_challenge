@@ -46,6 +46,4 @@ class Challenge1Page extends StatelessWidget {
       body: Container(),
     );
   }
-
-
 }
